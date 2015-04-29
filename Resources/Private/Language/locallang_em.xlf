@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="20135-054-12T18:50:00Z" product-name="mo_outside_webroot">
+		<header/>
+		<body>
+
+			<trans-unit id="faltest.config.rootpath">
+				<source>Absolute path to the root of the local filesystem:</source>
+			</trans-unit>
+
+		</body>
+	</file>
+</xliff>

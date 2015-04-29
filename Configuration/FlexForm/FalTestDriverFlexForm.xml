@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<T3DataStructure>
+	<meta>
+		<langDisable>1</langDisable>
+	</meta>
+	<ROOT>
+		<type>array</type>
+		<el>
+			<logFileName>
+				<TCEforms>
+					<label>File name (full path) for logging all function calls (no logging if leaved blank)</label>
+					<config>
+						<type>input</type>
+						<size>30</size>
+					</config>
+				</TCEforms>
+			</logFileName>
+		</el>
+	</ROOT>
+</T3DataStructure>
