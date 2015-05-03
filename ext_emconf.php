@@ -24,7 +24,7 @@ $EM_CONF['teamruhr_fal_test'] = array (
 		array (
 			'depends' =>
 				array (
-					'typo3' => '7.2.0-7.2.99',
+					'typo3' => '7.2.0-7.99.99',
 				),
 			'conflicts' =>
 				array (
