@@ -498,7 +498,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 */
 	public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName) {
 		$this->writeLog('moveFileWithinStorage(' . $fileIdentifier . ',' . $targetFolderIdentifier . ',' . $newFileName . ')');
-		$this->writeLog('	!!! not yet implemented');
+		$fileInfo = $this->getFileInfoByIdentifier($fileIdentifier);
+		$fullPath = $this->getFullPath(intval($fileInfo['id']));
+		return $this->addFile($fullPath, $targetFolderIdentifier, $newFileName, TRUE);
 	}
 
 
