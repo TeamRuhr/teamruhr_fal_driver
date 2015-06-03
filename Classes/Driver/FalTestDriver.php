@@ -321,7 +321,6 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 */
 	public function fileExists($fileIdentifier) {
 		$this->writeLog('fileExists(' . $fileIdentifier . ')');
-		$this->writeLog('	!!! not yet implemented');
 		$where = 'identifier="' . $fileIdentifier . '"';
 		$dbResult = $this->getDatabaseConnection()->exec_SELECTquery('path,name', self::TABLE_NAME, $where);
 		return ($this->getDatabaseConnection()->sql_num_rows($dbResult) > 0);
@@ -374,6 +373,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 		$parentPath = $this->getFullPath($newRecord['parent']);
 		$newRecord['path'] = uniqid('trft_');
 		copy($localFilePath, $parentPath . '/' . $newRecord['path']);
+		if ($removeOriginal) {
+			unlink($localFilePath);
+		}
 		$newRecord['identifier'] = $this->generateUuid();
 		if ($newFileName == '') {
 			$pathParts = pathinfo($localFilePath);
@@ -419,7 +421,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 */
 	public function copyFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $fileName) {
 		$this->writeLog('copyFileWithinStorage(' . $fileIdentifier . ',' . $targetFolderIdentifier . ',' . $fileName . ')');
-		$this->writeLog('	!!! not yet implemented');
+		$fileInfo = $this->getFileInfoByIdentifier($fileIdentifier);
+		$fullPath = $this->getFullPath(intval($fileInfo['id']));
+		return $this->addFile($fullPath, $targetFolderIdentifier, $fileName, FALSE);
 	}
 
 	/**
