@@ -383,7 +383,7 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 		} else {
 			$newRecord['name'] = $newFileName;
 		}
-		$newRecord['isDirectory'] = 1;
+		$newRecord['isDirectory'] = 0;
 		$dbResult = $this->getDatabaseConnection()->exec_INSERTquery(self::TABLE_NAME, $newRecord);
 		return $newRecord['identifier'];
 	}
