@@ -633,8 +633,7 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 */
 	public function dumpFileContents($identifier) {
 		$this->writeLog('dumpFileContents(' . $identifier . ')');
-		$this->writeLog('	!!! not yet implemented');
-		return 'dumpFileContents not yet implemented.';
+		readfile($this->getAbsolutePath($this->canonicalizeAndCheckFileIdentifier($identifier)), 0);
 	}
 
 	/**
