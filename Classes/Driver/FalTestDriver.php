@@ -449,8 +449,10 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 */
 	public function replaceFile($fileIdentifier, $localFilePath) {
 		$this->writeLog('replaceFile(' . $fileIdentifier . ',' . $localFilePath . ')');
-		$this->writeLog('	!!! not yet implemented');
-		return FALSE;
+		$fileInfo = $this->getFileInfoByIdentifier($fileIdentifier);
+		$fullPath = $this->getFullPath(intval($fileInfo['id']));
+		$result = copy($localFilePath, $fullPath);
+		return $result;
 	}
 
 	/**
