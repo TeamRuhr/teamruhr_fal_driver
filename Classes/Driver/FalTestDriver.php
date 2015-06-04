@@ -544,8 +544,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 */
 	public function getFileContents($fileIdentifier) {
 		$this->writeLog('getFileContents(' . $fileIdentifier . ')');
-		$this->writeLog('	!!! not yet implemented');
-		return 'The function getFileContents is not implemented yet.';
+		$fileInfo = $this->getFileInfoByIdentifier($fileIdentifier);
+		$fullPath = $this->getFullPath(intval($fileInfo['id']));
+		return file_get_contents($fullPath);
 	}
 
 	/**
@@ -557,8 +558,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 */
 	public function setFileContents($fileIdentifier, $contents) {
 		$this->writeLog('setFileContents(' . $fileIdentifier . ',' . $contents . ')');
-		$this->writeLog('	!!! not yet implemented');
-		return 0;
+		$fileInfo = $this->getFileInfoByIdentifier($fileIdentifier);
+		$fullPath = $this->getFullPath(intval($fileInfo['id']));
+		return file_put_contents($fullPath, $contents);
 	}
 
 	/**
