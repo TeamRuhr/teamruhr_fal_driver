@@ -608,7 +608,12 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 */
 	public function getFileForLocalProcessing($fileIdentifier, $writable = TRUE) {
 		$this->writeLog('getFileForLocalProcessing(' . $fileIdentifier . ',' . $writable . ')');
-		$this->writeLog('	!!! not yet implemented');
+		if ($writable === FALSE) {
+			$fileInfo = $this->getFileInfoByIdentifier($fileIdentifier);
+			return $this->getFullPath(intval($fileInfo['id']));
+		} else {
+			return $this->copyFileToTemporaryPath($fileIdentifier);
+		}
 	}
 
 	/**
@@ -794,6 +799,28 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 		$where = 'parent=' . $folderId . ' AND isDirectory=1';
 		$dbResult = $this->getDatabaseConnection()->exec_SELECTquery('identifier,path,name', self::TABLE_NAME, $where);
 		return $this->getDatabaseConnection()->sql_num_rows($dbResult);
+	}
+
+	/**
+	 * Copies a file to a temporary path and returns that path.
+	 *
+	 * @param string $fileIdentifier
+	 * @return string The temporary path
+	 * @throws \RuntimeException
+	 */
+	protected function copyFileToTemporaryPath($fileIdentifier) {
+		$fileInfo = $this->getFileInfoByIdentifier($fileIdentifier);
+		$sourcePath = $this->getFullPath(intval($fileInfo['id']));
+		$temporaryPath = $this->getTemporaryPathForFile($fileIdentifier);
+		$result = copy($sourcePath, $temporaryPath);
+		touch($temporaryPath, filemtime($sourcePath));
+		if ($result === FALSE) {
+			throw new \RuntimeException(
+				'Copying file "' . $fileIdentifier . '" to temporary path "' . $temporaryPath . '" failed.',
+				1320577649
+			);
+		}
+		return $temporaryPath;
 	}
 
 	protected function getFullPath($id) {
