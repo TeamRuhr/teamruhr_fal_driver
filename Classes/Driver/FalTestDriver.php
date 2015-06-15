@@ -2,9 +2,6 @@
 
 namespace Teamruhr\TeamruhrFalTest\Driver;
 
-use TYPO3\CMS\Core\Resource\Driver\AbstractHierarchicalFilesystemDriver;
-use TYPO3\CMS\Core\Resource\ResourceStorage;
-
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -18,12 +15,8 @@ use TYPO3\CMS\Core\Resource\ResourceStorage;
  * The TYPO3 project - inspiring people to share!
  */
 
-/*
- *  Copyright notice
- *
- *  (c) 2015 Michael Oehlhof <typo3@oehlhof.de>
- *  All rights reserved
- */
+use TYPO3\CMS\Core\Resource\Driver\AbstractHierarchicalFilesystemDriver;
+use TYPO3\CMS\Core\Resource\ResourceStorage;
 
 /**
  * Driver for testing FAL using files outside of the webroot directory
@@ -43,11 +36,13 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	protected $configuration;
 
 	/**
+	 * The storage uid the driver belongs to
 	 * @var int
 	 */
 	protected $storageUid;
 
 	/**
+	 * The resource handle of the log file
 	 * @var resource
 	 */
 	protected $fileHandle = NULL;
@@ -63,7 +58,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Sets the storage uid the driver belongs to
 	 *
-	 * @param int $storageUid
+	 * @param int $storageUid The storage uid
+	 *
 	 * @return void
 	 */
 	public function setStorageUid($storageUid) {
@@ -93,7 +89,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 			$dbResult = $this->getDatabaseConnection()->exec_INSERTquery(self::TABLE_NAME, $rootRecord);
 		} else {
 			$rootRecord = $this->getDatabaseConnection()->sql_fetch_assoc($dbResult);
-			// @TODO: Check if $this->configuration['rootPath'] == $rootRecord['path'], init if !=
+			// @TODO: Check if $this->configuration['rootPath'] == $rootRecord['path']
+			// init if !=
 			$this->configuration['rootIdentifier'] = $rootRecord['identifier'];
 			$this->configuration['rootPath'] = $rootRecord['path'];
 			$this->configuration['rootName'] = $rootRecord['name'];
@@ -116,7 +113,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * configuration into the actual capabilities of the driver
 	 * and returns the result.
 	 *
-	 * @param int $capabilities
+	 * @param int $capabilities The user capabilities
+	 *
 	 * @return int
 	 */
 	public function mergeConfigurationCapabilities($capabilities) {
@@ -129,6 +127,7 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * Returns TRUE if this driver has the given capability.
 	 *
 	 * @param int $capability A capability, as defined in a CAPABILITY_* constant
+	 *
 	 * @return bool
 	 */
 	public function hasCapability($capability) {
@@ -153,9 +152,10 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Cleans a fileName from not allowed characters
 	 *
-	 * @param string $fileName
+	 * @param string $fileName The file name to be cleaned
 	 * @param string $charset Charset of the a fileName
 	 *                        (defaults to current charset; depending on context)
+	 *
 	 * @return string the cleaned filename
 	 */
 	public function sanitizeFileName($fileName, $charset = '') {
@@ -169,7 +169,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * into account. This helps mitigating problems with case-insensitive
 	 * databases.
 	 *
-	 * @param string $identifier
+	 * @param string $identifier The file identifier
+	 *
 	 * @return string
 	 */
 	public function hashIdentifier($identifier) {
@@ -201,7 +202,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Returns the identifier of the folder the file resides in
 	 *
-	 * @param string $fileIdentifier
+	 * @param string $fileIdentifier The file identifier
+	 *
 	 * @return string
 	 */
 	public function getParentFolderIdentifierOfIdentifier($fileIdentifier) {
@@ -223,7 +225,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * Returns the public URL to a file.
 	 * Either fully qualified URL or relative to PATH_site (rawurlencoded).
 	 *
-	 * @param string $identifier
+	 * @param string $identifier The identifier
+	 *
 	 * @return string
 	 */
 	public function getPublicUrl($identifier) {
@@ -236,9 +239,10 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * Creates a folder, within a parent folder.
 	 * If no parent folder is given, a root level folder will be created
 	 *
-	 * @param string $newFolderName
-	 * @param string $parentFolderIdentifier
-	 * @param bool $recursive
+	 * @param string $newFolderName The new folder
+	 * @param string $parentFolderIdentifier The parent folder
+	 * @param bool $recursive Flag for creating recursive
+	 *
 	 * @return string the Identifier of the new folder
 	 */
 	public function createFolder($newFolderName, $parentFolderIdentifier = '', $recursive = FALSE) {
@@ -257,9 +261,12 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 		$newRecord['isDirectory'] = 1;
 		$dbResult = $this->getDatabaseConnection()->exec_INSERTquery(self::TABLE_NAME, $newRecord);
 		if ($newFolderName == '_processed_') {
-			// When we have to create the _processed_ folder, we have also to update the driver configuration
+			// When we have to create the _processed_ folder,
+			// we have also to update the driver configuration
 			$where = 'uid=' . $this->storageUid;
-			$this->getDatabaseConnection()->exec_UPDATEquery('sys_file_storage', $where, array('processingfolder' => $newRecord['identifier']));
+			$this->getDatabaseConnection()->exec_UPDATEquery('sys_file_storage',
+				$where,
+				array('processingfolder' => $newRecord['identifier']));
 		}
 		return $newRecord['identifier'];
 	}
@@ -267,20 +274,23 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Renames a folder in this storage.
 	 *
-	 * @param string $folderIdentifier
-	 * @param string $newName
+	 * @param string $folderIdentifier The folder to be renamed
+	 * @param string $newName The new folder name
+	 *
 	 * @return array A map of old to new file identifiers of all affected resources
 	 */
 	public function renameFolder($folderIdentifier, $newName) {
 		$this->writeLog('renameFolder(' . $folderIdentifier . ',' . $newName . ')');
 		$this->writeLog('	!!! not yet implemented');
+		return array();
 	}
 
 	/**
 	 * Removes a folder in filesystem.
 	 *
-	 * @param string $folderIdentifier
-	 * @param bool $deleteRecursively
+	 * @param string $folderIdentifier The folder to be deleted
+	 * @param bool $deleteRecursively Flag for deleting recursive
+	 *
 	 * @return bool
 	 */
 	public function deleteFolder($folderIdentifier, $deleteRecursively = FALSE) {
@@ -317,7 +327,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Checks if a file exists.
 	 *
-	 * @param string $fileIdentifier
+	 * @param string $fileIdentifier The file to be checked
+	 *
 	 * @return bool
 	 */
 	public function fileExists($fileIdentifier) {
@@ -330,7 +341,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Checks if a folder exists.
 	 *
-	 * @param string $folderIdentifier
+	 * @param string $folderIdentifier The folder to be checked
+	 *
 	 * @return bool
 	 */
 	public function folderExists($folderIdentifier) {
@@ -343,7 +355,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Checks if a folder contains files and (if supported) other folders.
 	 *
-	 * @param string $folderIdentifier
+	 * @param string $folderIdentifier The folder to be checked
+	 *
 	 * @return bool TRUE if there are no files and folders within $folder
 	 */
 	public function isFolderEmpty($folderIdentifier) {
@@ -360,11 +373,12 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * further check is done here! After a successful the original file must
 	 * not exist anymore.
 	 *
-	 * @param string $localFilePath (within PATH_site)
-	 * @param string $targetFolderIdentifier
-	 * @param string $newFileName optional, if not given original name is used
-	 * @param bool $removeOriginal if set the original file will be removed
+	 * @param string $localFilePath The file to be added (within PATH_site)
+	 * @param string $targetFolderIdentifier The target folder
+	 * @param string $newFileName Optional, if not given original name is used
+	 * @param bool $removeOriginal If set the original file will be removed
 	 *                                after successful operation
+	 *
 	 * @return string the identifier of the new file
 	 */
 	public function addFile($localFilePath, $targetFolderIdentifier, $newFileName = '', $removeOriginal = TRUE) {
@@ -392,8 +406,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Creates a new (empty) file and returns the identifier.
 	 *
-	 * @param string $fileName
-	 * @param string $parentFolderIdentifier
+	 * @param string $fileName The file to be created
+	 * @param string $parentFolderIdentifier The parent folder
+	 *
 	 * @return string
 	 */
 	public function createFile($fileName, $parentFolderIdentifier) {
@@ -415,9 +430,10 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * Note that this is only about an inner storage copy action,
 	 * where a file is just copied to another folder in the same storage.
 	 *
-	 * @param string $fileIdentifier
-	 * @param string $targetFolderIdentifier
-	 * @param string $fileName
+	 * @param string $fileIdentifier The file to be copied
+	 * @param string $targetFolderIdentifier The target folder
+	 * @param string $fileName The file name of the copied file
+	 *
 	 * @return string the Identifier of the new file
 	 */
 	public function copyFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $fileName) {
@@ -430,8 +446,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Renames a file in this storage.
 	 *
-	 * @param string $fileIdentifier
+	 * @param string $fileIdentifier The file to be renamed
 	 * @param string $newName The target path (including the file name!)
+	 *
 	 * @return string The identifier of the file after renaming
 	 */
 	public function renameFile($fileIdentifier, $newName) {
@@ -444,8 +461,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Replaces a file with file in local file system.
 	 *
-	 * @param string $fileIdentifier
-	 * @param string $localFilePath
+	 * @param string $fileIdentifier The file to be replaced
+	 * @param string $localFilePath The new file
+	 *
 	 * @return bool TRUE if the operation succeeded
 	 */
 	public function replaceFile($fileIdentifier, $localFilePath) {
@@ -461,7 +479,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * still used or if it is a bad idea to delete it for some other reason
 	 * this has to be taken care of in the upper layers (e.g. the Storage)!
 	 *
-	 * @param string $fileIdentifier
+	 * @param string $fileIdentifier The file to be deleted
+	 *
 	 * @return bool TRUE if deleting the file succeeded
 	 */
 	public function deleteFile($fileIdentifier) {
@@ -479,8 +498,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Creates a hash for a file.
 	 *
-	 * @param string $fileIdentifier
+	 * @param string $fileIdentifier The file
 	 * @param string $hashAlgorithm The hash algorithm to use
+	 *
 	 * @return string
 	 */
 	public function hash($fileIdentifier, $hashAlgorithm) {
@@ -494,9 +514,10 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * Note that this is only about an inner-storage move action,
 	 * where a file is just moved to another folder in the same storage.
 	 *
-	 * @param string $fileIdentifier
-	 * @param string $targetFolderIdentifier
-	 * @param string $newFileName
+	 * @param string $fileIdentifier The file to be removed
+	 * @param string $targetFolderIdentifier The target folder
+	 * @param string $newFileName The new file name
+	 *
 	 * @return string
 	 */
 	public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName) {
@@ -512,26 +533,31 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Folder equivalent to moveFileWithinStorage().
 	 *
-	 * @param string $sourceFolderIdentifier
-	 * @param string $targetFolderIdentifier
-	 * @param string $newFolderName
+	 * @param string $sourceFolderIdentifier The folder to be moved
+	 * @param string $targetFolderIdentifier The target folder
+	 * @param string $newFolderName The new folder name
+	 *
 	 * @return array All files which are affected, map of old => new file identifiers
 	 */
 	public function moveFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName) {
-		$this->writeLog('moveFolderWithinStorage(' . $sourceFolderIdentifier . ',' . $targetFolderIdentifier . ',' . $newFolderName . ')');
+		$this->writeLog('moveFolderWithinStorage(' . $sourceFolderIdentifier . ',' . $targetFolderIdentifier .
+			',' . $newFolderName . ')');
 		$this->writeLog('	!!! not yet implemented');
+		return array();
 	}
 
 	/**
 	 * Folder equivalent to copyFileWithinStorage().
 	 *
-	 * @param string $sourceFolderIdentifier
-	 * @param string $targetFolderIdentifier
-	 * @param string $newFolderName
+	 * @param string $sourceFolderIdentifier The folder to be copied
+	 * @param string $targetFolderIdentifier The target folder
+	 * @param string $newFolderName The new folder name
+	 *
 	 * @return bool
 	 */
 	public function copyFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName) {
-		$this->writeLog('copyFolderWithinStorage(' . $sourceFolderIdentifier . ',' . $targetFolderIdentifier . ',' . $newFolderName . ')');
+		$this->writeLog('copyFolderWithinStorage(' . $sourceFolderIdentifier . ',' . $targetFolderIdentifier .
+			',' . $newFolderName . ')');
 		$this->writeLog('	!!! not yet implemented');
 		return FALSE;
 	}
@@ -542,7 +568,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * external location. So this might be an expensive operation (both in terms
 	 * of processing resources and money) for large files.
 	 *
-	 * @param string $fileIdentifier
+	 * @param string $fileIdentifier The file
+	 *
 	 * @return string The file contents
 	 */
 	public function getFileContents($fileIdentifier) {
@@ -555,8 +582,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Sets the contents of a file to the specified value.
 	 *
-	 * @param string $fileIdentifier
-	 * @param string $contents
+	 * @param string $fileIdentifier The file
+	 * @param string $contents The new file contents
+	 *
 	 * @return int The number of bytes written to the file
 	 */
 	public function setFileContents($fileIdentifier, $contents) {
@@ -569,8 +597,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Checks if a file inside a folder exists
 	 *
-	 * @param string $fileName
-	 * @param string $folderIdentifier
+	 * @param string $fileName The file to be checked for existence
+	 * @param string $folderIdentifier The folder to be checked
+	 *
 	 * @return bool
 	 */
 	public function fileExistsInFolder($fileName, $folderIdentifier) {
@@ -584,8 +613,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Checks if a folder inside a folder exists.
 	 *
-	 * @param string $folderName
-	 * @param string $folderIdentifier
+	 * @param string $folderName The folder to be checked for existence
+	 * @param string $folderIdentifier The folder to be checked
+	 *
 	 * @return bool
 	 */
 	public function folderExistsInFolder($folderName, $folderIdentifier) {
@@ -600,11 +630,12 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * Returns a path to a local copy of a file for processing it. When changing the
 	 * file, you have to take care of replacing the current version yourself!
 	 *
-	 * @param string $fileIdentifier
+	 * @param string $fileIdentifier The file to get a local copy from
 	 * @param bool $writable Set this to FALSE if you only need the file for read
 	 *                       operations. This might speed up things, e.g. by using
 	 *                       a cached local version. Never modify the file if you
 	 *                       have set this flag!
+	 *
 	 * @return string The path to the file on the local disk
 	 */
 	public function getFileForLocalProcessing($fileIdentifier, $writable = TRUE) {
@@ -621,7 +652,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * Returns the permissions of a file/folder as an array
 	 * (keys r, w) of boolean flags
 	 *
-	 * @param string $identifier
+	 * @param string $identifier The file or folder
+	 *
 	 * @return array
 	 */
 	public function getPermissions($identifier) {
@@ -634,7 +666,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * buffer. Should not take care of header files or flushing
 	 * buffer before. Will be taken care of by the Storage.
 	 *
-	 * @param string $identifier
+	 * @param string $identifier The file to be dumped
+	 *
 	 * @return void
 	 */
 	public function dumpFileContents($identifier) {
@@ -651,8 +684,9 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 * matches the container identifier to allow access to the root
 	 * folder of a filemount.
 	 *
-	 * @param string $folderIdentifier
-	 * @param string $identifier identifier to be checked against $folderIdentifier
+	 * @param string $folderIdentifier The folder to be checked
+	 * @param string $identifier Identifier to be checked against $folderIdentifier
+	 *
 	 * @return bool TRUE if $content is within or matches $folderIdentifier
 	 */
 	public function isWithin($folderIdentifier, $identifier) {
@@ -667,9 +701,10 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Returns information about a file.
 	 *
-	 * @param string $fileIdentifier
+	 * @param string $fileIdentifier The file to get information from
 	 * @param array $propertiesToExtract Array of properties which are be extracted
 	 *                                   If empty all will be extracted
+	 *
 	 * @return array
 	 */
 	public function getFileInfoByIdentifier($fileIdentifier, array $propertiesToExtract = array()) {
@@ -688,7 +723,8 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Returns information about a file.
 	 *
-	 * @param string $folderIdentifier
+	 * @param string $folderIdentifier The folder to get information from
+	 *
 	 * @return array
 	 */
 	public function getFolderInfoByIdentifier($folderIdentifier) {
@@ -711,28 +747,31 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Returns a list of files inside the specified path
 	 *
-	 * @param string $folderIdentifier
-	 * @param int $start
-	 * @param int $numberOfItems
-	 * @param bool $recursive
-	 * @param array $filenameFilterCallbacks callbacks for filtering the items
+	 * @param string $folderIdentifier The folder to get the file list from
+	 * @param int $start Index to start with the list
+	 * @param int $numberOfItems Number of items to get in the list
+	 * @param bool $recursive Flag to get a recursive list
+	 * @param array $filenameFilterCallbacks Callbacks for filtering the items
 	 * @param string $sort Property name used to sort the items.
 	 *                     Among them may be: '' (empty, no sorting), name,
 	 *                     fileext, size, tstamp and rw.
 	 *                     If a driver does not support the given property, it
 	 *                     should fall back to "name".
 	 * @param bool $sortRev TRUE to indicate reverse sorting (last to first)
+	 *
 	 * @return array of FileIdentifiers
 	 */
-	public function getFilesInFolder($folderIdentifier, $start = 0, $numberOfItems = 0, $recursive = FALSE, array $filenameFilterCallbacks = array(), $sort = '', $sortRev = FALSE) {
-		$this->writeLog('getFilesInFolder(' . $folderIdentifier . ',' . $start . ',' . $numberOfItems . ',' . $recursive . ',' . $filenameFilterCallbacks . ',' . $sort . ',' . $sortRev . ')');
+	public function getFilesInFolder($folderIdentifier, $start = 0, $numberOfItems = 0, $recursive = FALSE,
+									array $filenameFilterCallbacks = array(), $sort = '', $sortRev = FALSE) {
+		$this->writeLog('getFilesInFolder(' . $folderIdentifier . ',' . $start . ',' . $numberOfItems . ',' .
+			$recursive . ',' . $filenameFilterCallbacks . ',' . $sort . ',' . $sortRev . ')');
 		$this->writeLog('	!!! $start, $numberOfItems, $recursive, $filenameFilterCallbacks, $sort and $sortRev not yet implemented');
 		$folderInfo = $this->getFolderInfoByIdentifier($folderIdentifier);
 		$folderId = intval($folderInfo['id']);
 		$files = array();
 		$where = 'parent=' . $folderId . ' AND isDirectory=0';
 		$dbResult = $this->getDatabaseConnection()->exec_SELECTquery('identifier,path,name', self::TABLE_NAME, $where);
-		while ($resultRecord = $this->getDatabaseConnection()->sql_fetch_assoc($dbResult)) {
+		while (($resultRecord = $this->getDatabaseConnection()->sql_fetch_assoc($dbResult))) {
 			$files[$resultRecord['identifier']] = $resultRecord['identifier'];
 		}
 		return $files;
@@ -741,28 +780,31 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Returns a list of folders inside the specified path
 	 *
-	 * @param string $folderIdentifier
-	 * @param int $start
-	 * @param int $numberOfItems
-	 * @param bool $recursive
-	 * @param array $folderNameFilterCallbacks callbacks for filtering the items
+	 * @param string $folderIdentifier The folder to get the folder list from
+	 * @param int $start Index to start with the list
+	 * @param int $numberOfItems Number of items to get in the list
+	 * @param bool $recursive Flag to get a recursive list
+	 * @param array $folderNameFilterCallbacks Callbacks for filtering the items
 	 * @param string $sort Property name used to sort the items.
 	 *                     Among them may be: '' (empty, no sorting), name,
 	 *                     fileext, size, tstamp and rw.
 	 *                     If a driver does not support the given property, it
 	 *                     should fall back to "name".
 	 * @param bool $sortRev TRUE to indicate reverse sorting (last to first)
+	 *
 	 * @return array of Folder Identifier
 	 */
-	public function getFoldersInFolder($folderIdentifier, $start = 0, $numberOfItems = 0, $recursive = FALSE, array $folderNameFilterCallbacks = array(), $sort = '', $sortRev = FALSE) {
-		$this->writeLog('getFoldersInFolder(' . $folderIdentifier . ',' . $start . ',' . $numberOfItems . ',' . $recursive . ',' . $folderNameFilterCallbacks . ',' . $sort . ',' . $sortRev . ')');
+	public function getFoldersInFolder($folderIdentifier, $start = 0, $numberOfItems = 0, $recursive = FALSE,
+									array $folderNameFilterCallbacks = array(), $sort = '', $sortRev = FALSE) {
+		$this->writeLog('getFoldersInFolder(' . $folderIdentifier . ',' . $start . ',' . $numberOfItems . ',' .
+			$recursive . ',' . $folderNameFilterCallbacks . ',' . $sort . ',' . $sortRev . ')');
 		$this->writeLog('	!!! $start, $numberOfItems, $recursive, $filenameFilterCallbacks, $sort and $sortRev not yet implemented');
 		$folderInfo = $this->getFolderInfoByIdentifier($folderIdentifier);
 		$folderId = intval($folderInfo['id']);
 		$folders = array();
 		$where = 'parent=' . $folderId . ' AND isDirectory=1';
 		$dbResult = $this->getDatabaseConnection()->exec_SELECTquery('identifier,path,name', self::TABLE_NAME, $where);
-		while ($resultRecord = $this->getDatabaseConnection()->sql_fetch_assoc($dbResult)) {
+		while (($resultRecord = $this->getDatabaseConnection()->sql_fetch_assoc($dbResult))) {
 			$folders[$resultRecord['identifier']] = $resultRecord['identifier'];
 		}
 		return $folders;
@@ -771,10 +813,11 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Returns the number of files inside the specified path
 	 *
-	 * @param string  $folderIdentifier
-	 * @param boolean $recursive
-	 * @param array   $filenameFilterCallbacks callbacks for filtering the items
-	 * @return integer Number of files in folder
+	 * @param string  $folderIdentifier The folder to be checked
+	 * @param bool    $recursive Flag to get a recursive count
+	 * @param array   $filenameFilterCallbacks Callbacks for filtering the items
+	 *
+	 * @return int Number of files in folder
 	 */
 	public function countFilesInFolder($folderIdentifier, $recursive = FALSE, array $filenameFilterCallbacks = array()) {
 		$this->writeLog('countFilesInFolder(' . $folderIdentifier . ',' . $recursive . ',' . $filenameFilterCallbacks . ')');
@@ -788,10 +831,11 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Returns the number of folders inside the specified path
 	 *
-	 * @param string  $folderIdentifier
-	 * @param boolean $recursive
-	 * @param array   $folderNameFilterCallbacks callbacks for filtering the items
-	 * @return integer Number of folders in folder
+	 * @param string  $folderIdentifier The folder to be checked
+	 * @param bool    $recursive Flag to get a recursive list
+	 * @param array   $folderNameFilterCallbacks Callbacks for filtering the items
+	 *
+	 * @return int Number of folders in folder
 	 */
 	public function countFoldersInFolder($folderIdentifier, $recursive = FALSE, array $folderNameFilterCallbacks = array()) {
 		$this->writeLog('countFoldersInFolder(' . $folderIdentifier . ',' . $recursive . ',' . $folderNameFilterCallbacks . ')');
@@ -805,9 +849,11 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	/**
 	 * Copies a file to a temporary path and returns that path.
 	 *
-	 * @param string $fileIdentifier
+	 * @param string $fileIdentifier The file to be copied
+	 *
 	 * @return string The temporary path
-	 * @throws \RuntimeException
+	 *
+	 * @throws \RuntimeException Thrown if file could not be copied
 	 */
 	protected function copyFileToTemporaryPath($fileIdentifier) {
 		$fileInfo = $this->getFileInfoByIdentifier($fileIdentifier);
@@ -824,6 +870,13 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 		return $temporaryPath;
 	}
 
+	/**
+	 * Get the full path of a file or folder
+	 *
+	 * @param int $id The id of a file or folder to get the full path from
+	 *
+	 * @return string The full path to the file or folder
+	 */
 	protected function getFullPath($id) {
 		$fullPath = '';
 		$parentId = $id;
@@ -841,6 +894,11 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 		return $fullPath;
 	}
 
+	/**
+	 * Create a unique identifier
+	 *
+	 * @return string A unique identifier
+	 */
 	protected function generateUuid() {
 		return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
 			mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
@@ -851,6 +909,13 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 		);
 	}
 
+	/**
+	 * Write a message to the log file, if used
+	 *
+	 * @param string $logMessage The message to be logged
+	 *
+	 * @return void
+	 */
 	protected function writeLog($logMessage) {
 		$fileName = $this->configuration['logFileName'];
 		if ($fileName == '') {
@@ -860,7 +925,7 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 			touch($fileName);
 		}
 		if ($this->fileHandle == NULL) {
-			$this->fileHandle = fopen($fileName, "a");
+			$this->fileHandle = fopen($fileName, 'a');
 		}
 		fwrite($this->fileHandle, $logMessage . "\n");
 	}

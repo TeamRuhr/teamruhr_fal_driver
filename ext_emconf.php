@@ -10,27 +10,24 @@
 
 $EM_CONF['teamruhr_fal_test'] = array (
 	'title' => 'FAL test driver for files outside the web root',
-	'description' => 'Provides a FAL test driver for using files which are stored outside of the web root directory. See documentation for more details.',
+	'description' => 'Provides a FAL test driver for using files which are stored outside of the web root directory. ' .
+		'See documentation for more details.',
 	'category' => 'be',
 	'version' => '1.0.2',
 	'state' => 'beta',
-	'uploadfolder' => false,
+	'uploadfolder' => FALSE,
 	'createDirs' => '',
-	'clearcacheonload' => false,
+	'clearcacheonload' => FALSE,
 	'author' => 'Michael Oehlhof',
 	'author_email' => 'typo3@oehlhof.de',
 	'author_company' => '',
-	'constraints' =>
-		array (
-			'depends' =>
-				array (
+	'constraints' => array (
+			'depends' => array (
 					'typo3' => '7.2.0-7.99.99',
 				),
-			'conflicts' =>
-				array (
+			'conflicts' => array (
 				),
-			'suggests' =>
-				array (
+			'suggests' => array (
 				),
 		),
 );
