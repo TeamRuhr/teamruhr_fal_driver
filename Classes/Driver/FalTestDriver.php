@@ -37,6 +37,7 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	const TABLE_NAME = 'tx_teamruhrfaltest_files';
 
 	/**
+	 * Contains the extension configuration
 	 * @var array
 	 */
 	protected $configuration;
@@ -78,7 +79,7 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	 */
 	public function initialize() {
 		$this->capabilities = ResourceStorage::CAPABILITY_BROWSABLE | ResourceStorage::CAPABILITY_WRITABLE;
-		$configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['mo_outside_webroot']);
+		$configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['teamruhr_fal_test']);
 		$this->configuration['rootPath'] = $configuration['rootPath'];
 		$this->writeLog('initialize()');
 		$dbResult = $this->getDatabaseConnection()->exec_SELECTquery('identifier,path,name', self::TABLE_NAME, 'identifier="root"');
