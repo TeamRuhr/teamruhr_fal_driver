@@ -745,6 +745,26 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 	}
 
 	/**
+	 * Returns the identifier of a file inside the folder
+	 *
+	 * @param string $fileName
+	 * @param string $folderIdentifier
+	 * @return string file identifier
+	 */
+	public function getFileInFolder($fileName, $folderIdentifier) {
+		$folderInfo = $this->getFolderInfoByIdentifier($folderIdentifier);
+		$folderId = intval($folderInfo['id']);
+		$where = 'parent=' . $folderId . ' AND isDirectory=0 AND name="' . $fileName . '"';
+		$dbResult = $this->getDatabaseConnection()->exec_SELECTquery('identifier,path,name', self::TABLE_NAME, $where);
+		if ($this->getDatabaseConnection()->sql_num_rows($dbResult) > 0) {
+			$fileRecord = $this->getDatabaseConnection()->sql_fetch_assoc($dbResult);
+			return $fileRecord['identifier'];
+		} else {
+			return '';
+		}
+	}
+
+	/**
 	 * Returns a list of files inside the specified path
 	 *
 	 * @param string $folderIdentifier The folder to get the file list from
@@ -775,6 +795,26 @@ class FalTestDriver extends AbstractHierarchicalFilesystemDriver{
 			$files[$resultRecord['identifier']] = $resultRecord['identifier'];
 		}
 		return $files;
+	}
+
+	/**
+	 * Returns the identifier of a folder inside the folder
+	 *
+	 * @param string $folderName The name of the target folder
+	 * @param string $folderIdentifier
+	 * @return string folder identifier
+	 */
+	public function getFolderInFolder($folderName, $folderIdentifier) {
+		$folderInfo = $this->getFolderInfoByIdentifier($folderIdentifier);
+		$folderId = intval($folderInfo['id']);
+		$where = 'parent=' . $folderId . ' AND isDirectory=1 AND name="' . $folderName . '"';
+		$dbResult = $this->getDatabaseConnection()->exec_SELECTquery('identifier,path,name', self::TABLE_NAME, $where);
+		if ($this->getDatabaseConnection()->sql_num_rows($dbResult) > 0) {
+			$folderRecord = $this->getDatabaseConnection()->sql_fetch_assoc($dbResult);
+			return $folderRecord['identifier'];
+		} else {
+			return '';
+		}
 	}
 
 	/**
