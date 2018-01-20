@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<T3DataStructure>
+	<meta>
+		<langDisable>1</langDisable>
+	</meta>
+	<ROOT>
+		<type>array</type>
+		<el>
+			<rootPath>
+				<TCEforms>
+					<label>LLL:EXT:teamruhr_fal_driver/Resources/Private/Language/locallang_em.xlf:teamruhrfaldriver.config.rootpath</label>
+					<config>
+						<type>input</type>
+						<size>30</size>
+						<eval>trim,required</eval>
+					</config>
+				</TCEforms>
+			</rootPath>
+			<logFileName>
+				<TCEforms>
+					<label>LLL:EXT:teamruhr_fal_driver/Resources/Private/Language/locallang_em.xlf:teamruhrfaldriver.config.logfilename</label>
+					<config>
+						<type>input</type>
+						<size>30</size>
+					</config>
+				</TCEforms>
+			</logFileName>
+		</el>
+	</ROOT>
+</T3DataStructure>

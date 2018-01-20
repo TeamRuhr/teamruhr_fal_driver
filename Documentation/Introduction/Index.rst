@@ -27,8 +27,8 @@ Processed folder
 ================
 
 I recommend using a folder inside the fileadmin as "Folder for manipulated and temporary images etc."
-Create a folder with the name "_processed_fal_test" on the root of the fileadmin and set it as configuration value of the driver element.
-1:/_processed_fal_test
+Create a folder with the name "_processed_fal_driver" on the root of the fileadmin and set it as configuration value of the driver element.
+1:/_processed_fal_driver
 
 
 Development

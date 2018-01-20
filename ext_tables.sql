@@ -1,7 +1,7 @@
 #
-# TABLE STRUCTURE FOR TABLE 'tx_mooutsidewebroot_files'
+# TABLE STRUCTURE FOR TABLE 'tx_teamruhrfaldriver_files'
 #
-CREATE TABLE tx_teamruhrfaltest_files (
+CREATE TABLE tx_teamruhrfaldriver_files (
 	id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	identifier VARCHAR(250) DEFAULT '' NOT NULL,
 	path VARCHAR(250) DEFAULT '' NOT NULL,

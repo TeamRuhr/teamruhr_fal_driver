@@ -9,13 +9,13 @@
 .. _start:
 
 =============================================================
-Teamruhr: FAL test driver
+Teamruhr: FAL driver
 =============================================================
 
 .. only:: html
 
 	:Classification:
-			teamruhr_fal_test
+			teamruhr_fal_driver
 
 		:Version:
 			|release|

@@ -1,18 +1,18 @@
 <?php
 
 /***************************************************************
- * Extension Manager/Repository config file for ext "teamruhr_fal_test".
+ * Extension Manager/Repository config file for ext "teamruhr_fal_driver".
  *
  * Manual updates:
  * Only the data in the array - everything else is removed by next
  * writing. "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF['teamruhr_fal_test'] = array (
+$EM_CONF['teamruhr_fal_driver'] = array (
 	'title' => 'FAL test driver for files outside the web root',
 	'description' => 'Provides a FAL test driver for using files which are stored outside of the web root directory. See documentation for more details.',
 	'category' => 'be',
-	'version' => '2.0.0',
+	'version' => '2.0.1',
 	'state' => 'beta',
 	'uploadfolder' => FALSE,
 	'createDirs' => '',
