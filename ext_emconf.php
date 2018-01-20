@@ -10,10 +10,9 @@
 
 $EM_CONF['teamruhr_fal_test'] = array (
 	'title' => 'FAL test driver for files outside the web root',
-	'description' => 'Provides a FAL test driver for using files which are stored outside of the web root directory. ' .
-		'See documentation for more details.',
+	'description' => 'Provides a FAL test driver for using files which are stored outside of the web root directory. See documentation for more details.',
 	'category' => 'be',
-	'version' => '1.0.3',
+	'version' => '2.0.0',
 	'state' => 'beta',
 	'uploadfolder' => FALSE,
 	'createDirs' => '',
@@ -23,7 +22,7 @@ $EM_CONF['teamruhr_fal_test'] = array (
 	'author_company' => '',
 	'constraints' => array (
 			'depends' => array (
-					'typo3' => '7.2.0-7.99.99',
+					'typo3' => '8.7.0-9.99.99',
 				),
 			'conflicts' => array (
 				),

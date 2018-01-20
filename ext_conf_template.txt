@@ -1,2 +1,5 @@
 # cat=basic; type=string; label=LLL:EXT:teamruhr_fal_test/Resources/Private/Language/locallang_em.xlf:faltest.config.rootpath
 rootPath = /var/www/
+
+# cat=basic; type=string; label=LLL:EXT:teamruhr_fal_test/Resources/Private/Language/locallang_em.xlf:faltest.config.logfilename
+logFileName = /var/www/logfile.txt

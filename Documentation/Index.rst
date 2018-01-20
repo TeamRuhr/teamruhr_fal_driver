@@ -24,7 +24,7 @@ Teamruhr: FAL test driver
 			en
 
 		:Description:
-			Provides a FAL driver for testing during development.
+			Provides a FAL driver for testing during FAL development.
 
 		:Keywords:
 			fal, driver

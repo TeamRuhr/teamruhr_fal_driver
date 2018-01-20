@@ -16,9 +16,11 @@ The path to the root directory must be set with the configuration in the extensi
 
 In the settings of the storage element you can specify a file where all calls to the functions are logged with their function parameters.
 
+The identifier, path and name are strictly separated. The identifier is not a combination of path and name as in the LocalDriver.
+
 This driver is "work in progress", so not all functions may be filled with the needed code yet.
 
-**Requires TYPO3 CMS 7.2**
+**Works with TYPO3 CMS 8.7 and 9.x**
 
 
 Processed folder
@@ -29,3 +31,8 @@ Create a folder with the name "_processed_fal_test" on the root of the fileadmin
 1:/_processed_fal_test
 
 
+Development
+===========
+
+You find the source of this driver on Github (https://github.com/TeamRuhr/teamruhr_fal_driver).
+Any pull requests are welcome.

@@ -5,7 +5,10 @@
 		<body>
 
 			<trans-unit id="faltest.config.rootpath">
-				<source>Absolute path to the root of the local filesystem:</source>
+				<source>Absolute path to the root of the local filesystem</source>
+			</trans-unit>
+			<trans-unit id="faltest.config.logfilename">
+				<source>Absolute path of a file to store log messages:All function calls are logged with their parameters in the log file.</source>
 			</trans-unit>
 
 		</body>
