@@ -38,7 +38,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
 {
 
-    const DRIVER_TYPE = 'Local';
+    const DRIVER_TYPE = 'TeamruhrFalDriver';
 
     const TABLE_NAME = 'tx_teamruhrfaldriver_files';
 
@@ -291,7 +291,7 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
                 ->execute()
                 ->fetch();
             if ($resultRecord === false) {
-                return '';
+                return $row['identifier'];
             } else {
                 return $resultRecord['identifier'];
             }
