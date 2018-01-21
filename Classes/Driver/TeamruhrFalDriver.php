@@ -121,24 +121,23 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
      */
     public function initialize()
     {
-        $this->capabilities = ResourceStorage::CAPABILITY_BROWSABLE | ResourceStorage::CAPABILITY_WRITABLE;
-        $configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['teamruhr_fal_driver']);
-        $this->configuration['rootPath'] = $configuration['rootPath'];
-        $this->configuration['logFileName'] = $configuration['logFileName'];
         $this->writeLog('initialize()');
+        $this->capabilities = ResourceStorage::CAPABILITY_BROWSABLE | ResourceStorage::CAPABILITY_WRITABLE;
         $this->connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
         $this->queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE_NAME);
         // Check if an update of the storageId is needed after updating from an older version (<= 2.0.3)
         $this->checkStorageUid();
+
         // Check if an enrty for the root record exists in the database table
         // If not, create the root entry
-        $row = $this->queryBuilder->select('identifier', 'storageId', 'path', 'name')
+        $row = $this->queryBuilder->select('identifier', 'storageId', 'path', 'name', 'id')
             ->from(self::TABLE_NAME)
             ->where($this->queryBuilder->expr()->eq('identifier', $this->queryBuilder->createNamedParameter('/', \PDO::PARAM_STR)))
             ->andWhere($this->queryBuilder->expr()->eq('storageId', (int)$this->storageUid))
             ->execute()
             ->fetch();
         if ($row === false) {
+            // Create new root record in database
             $this->configuration['rootIdentifier'] = self::ROOT_IDENTIFIER;
             $path = $this->configuration['rootPath'] ? $this->configuration['rootPath'] : '';
             $rootRecord = array(
@@ -158,6 +157,13 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
                 ->execute();
         } else {
             $rootRecord = $row;
+            // Check if root path has changed in sys_file_storage and set the new path in database
+            if ($row['path'] !== $this->configuration['rootPath']) {
+                $updateConnection = $this->connectionPool->getConnectionForTable(self::TABLE_NAME);
+                $updateConnection->update(self::TABLE_NAME,
+                    ['path' => $this->configuration['rootPath']],
+                    ['id' => (int)$row['id']]);
+            }
         }
         $this->configuration['rootIdentifier'] = $rootRecord['identifier'];
         $this->configuration['rootName'] = $rootRecord['name'];
