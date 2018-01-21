@@ -97,6 +97,23 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
     }
 
     /**
+     * Checks if the column storageId is empty after updating from an older version (<= 2.0.3)
+     */
+    private function checkStorageUid() {
+        $rows = $this->queryBuilder->select('storageId')
+            ->from(self::TABLE_NAME)
+            ->where($this->queryBuilder->expr()->eq('storageId', 0))
+            ->execute()
+            ->fetchAll();
+        if (count($rows) > 0) {
+            $updateConnection = $this->connectionPool->getConnectionForTable(self::TABLE_NAME);
+            $updateConnection->update(self::TABLE_NAME,
+                ['storageId' => (int)$this->storageUid],
+                ['storageId' => 0]);
+        }
+    }
+
+    /**
      * Initializes this object.
      * This is called by the storage after the driver has been attached.
      *
@@ -111,11 +128,14 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
         $this->writeLog('initialize()');
         $this->connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
         $this->queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE_NAME);
+        // Check if an update of the storageId is needed after updating from an older version (<= 2.0.3)
+        $this->checkStorageUid();
         // Check if an enrty for the root record exists in the database table
         // If not, create the root entry
-        $row = $this->queryBuilder->select('identifier', 'path', 'name')
+        $row = $this->queryBuilder->select('identifier', 'storageId', 'path', 'name')
             ->from(self::TABLE_NAME)
             ->where($this->queryBuilder->expr()->eq('identifier', $this->queryBuilder->createNamedParameter('/', \PDO::PARAM_STR)))
+            ->andWhere($this->queryBuilder->expr()->eq('storageId', (int)$this->storageUid))
             ->execute()
             ->fetch();
         if ($row === false) {
@@ -123,6 +143,7 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
             $path = $this->configuration['rootPath'] ? $this->configuration['rootPath'] : '';
             $rootRecord = array(
                 'identifier' => $this->configuration['rootIdentifier'],
+                'storageId' => $this->storageUid,
                 'path' => $path,
                 'name' => '',
                 'parent' => 0,
@@ -152,7 +173,7 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
      */
     protected function getInfoByIdentifier($identifier)
     {
-        $record = $this->queryBuilder->select('identifier', 'path', 'name', 'id', 'parent', 'size', 'creation_date', 'modification_date')
+        $record = $this->queryBuilder->select('identifier', 'storageId', 'path', 'name', 'id', 'parent', 'size', 'creation_date', 'modification_date')
             ->from(self::TABLE_NAME)
             ->where($this->queryBuilder->expr()->eq('identifier',
                 $this->queryBuilder->createNamedParameter($identifier, \PDO::PARAM_STR)))
@@ -337,6 +358,7 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
         $newRecord['path'] = uniqid(self::FILE_FOLDER_PREFIX);
         mkdir($parentPath . '/' . $newRecord['path']);
         $newRecord['identifier'] = $this->generateUuid();
+        $newRecord['storageId'] = $this->storageUid;
         $newRecord['name'] = $newFolderName;
         $newRecord['isDirectory'] = 1;
         $newRecord['size'] = 0;
@@ -512,6 +534,7 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
             unlink($localFilePath);
         }
         $newRecord['identifier'] = $this->generateUuid();
+        $newRecord['storageId'] = $this->storageUid;
         if ($newFileName == '') {
             $pathParts = pathinfo($localFilePath);
             $newRecord['name'] = $pathParts['basename'];
@@ -546,6 +569,7 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
         $newRecord['path'] = uniqid(self::FILE_FOLDER_PREFIX);
         touch($parentPath . '/' . $newRecord['path']);
         $newRecord['identifier'] = $this->generateUuid();
+        $newRecord['storageId'] = $this->storageUid;
         $newRecord['name'] = $fileName;
         $newRecord['isDirectory'] = 0;
         $newRecord['size'] = 0;
@@ -896,7 +920,7 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
     public function getFileInfoByIdentifier($fileIdentifier, array $propertiesToExtract = array())
     {
         $this->writeLog('getFileInfoByIdentifier(' . $fileIdentifier . ',' . $propertiesToExtract . ')');
-        $fileRecord = $this->queryBuilder->select('identifier', 'path', 'name', 'id', 'parent', 'size', 'creation_date', 'modification_date')
+        $fileRecord = $this->queryBuilder->select('identifier', 'storageId', 'path', 'name', 'id', 'parent', 'size', 'creation_date', 'modification_date')
             ->from(self::TABLE_NAME)
             ->where($this->queryBuilder->expr()->eq('identifier', $this->queryBuilder->createNamedParameter($fileIdentifier, \PDO::PARAM_STR)))
             ->andWhere($this->queryBuilder->expr()->eq('isDirectory', 0))
@@ -914,7 +938,7 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
                 'size' => $fileRecord['size'],
                 'creation_date' => $fileRecord['creation_date'],
                 'modification_date' => $fileRecord['modification_date'],
-                'storage' => $this->storageUid
+                'storage' => $fileRecord['storageId']
             );
         }
     }
@@ -929,7 +953,7 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
     public function getFolderInfoByIdentifier($folderIdentifier)
     {
         $this->writeLog('getFolderInfoByIdentifier(' . $folderIdentifier . ')');
-        $folderRecord = $this->queryBuilder->select('identifier', 'path', 'name', 'id', 'parent', 'size', 'creation_date', 'modification_date')
+        $folderRecord = $this->queryBuilder->select('identifier', 'storageId', 'path', 'name', 'id', 'parent', 'size', 'creation_date', 'modification_date')
             ->from(self::TABLE_NAME)
             ->where($this->queryBuilder->expr()->eq('identifier', $this->queryBuilder->createNamedParameter($folderIdentifier, \PDO::PARAM_STR)))
             ->andWhere($this->queryBuilder->expr()->eq('isDirectory', 1))
@@ -947,7 +971,7 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
                 'size' => $folderRecord['size'],
                 'creation_date' => $folderRecord['creation_date'],
                 'modification_date' => $folderRecord['modification_date'],
-                'storage' => $this->storageUid
+                'storage' => $folderRecord['storageId']
             );
         }
     }
