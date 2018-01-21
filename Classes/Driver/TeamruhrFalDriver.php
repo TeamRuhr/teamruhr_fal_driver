@@ -120,9 +120,10 @@ class TeamruhrFalDriver extends AbstractHierarchicalFilesystemDriver
             ->fetch();
         if ($row === false) {
             $this->configuration['rootIdentifier'] = self::ROOT_IDENTIFIER;
+            $path = $this->configuration['rootPath'] ? $this->configuration['rootPath'] : '';
             $rootRecord = array(
                 'identifier' => $this->configuration['rootIdentifier'],
-                'path' => $this->configuration['rootPath'],
+                'path' => $path,
                 'name' => '',
                 'parent' => 0,
                 'isDirectory' => 1,

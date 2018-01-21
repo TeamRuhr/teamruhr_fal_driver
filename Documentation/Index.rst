@@ -30,7 +30,7 @@ Teamruhr: FAL driver
 			fal, driver
 
 		:Copyright:
-			2015
+			2015-2018
 
 		:Author:
 			Michael Oehlhof
