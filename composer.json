@@ -1,0 +1,29 @@
+{
+  "name": "teamruhr/teamruhr-fal-driver",
+  "type": "typo3-cms-extension",
+  "version": "2.0.6",
+  "description": "Provides a FAL test driver for using files which are stored outside of the web root directory. See documentation for more details.",
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "Michael Oehlhof",
+      "role": "Project Owner"
+    }
+  ],
+  "homepage": "https://github.com/TeamRuhr/teamruhr_fal_driver",
+  "support": {
+    "issues": "https://github.com/TeamRuhr/teamruhr_fal_driver/issues"
+  },
+  "require": {
+    "typo3/cms-core": "^8.7.0"
+  },
+  "replace": {
+    "teamruhr_fal_driver": "self.version",
+    "typo3-ter/teamruhr-fal-driver": "self.version"
+  },
+  "autoload": {
+    "psr-4": {
+      "TeamRuhr\\TeamruhrFalDriver\\": "Classes/"
+    }
+  }
+}
