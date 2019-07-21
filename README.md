@@ -16,7 +16,7 @@ The identifier, path and name are strictly separated. The identifier is not a co
 
 This driver is "work in progress", so not all functions may be filled with the needed code yet.
 
-**Works with TYPO3 CMS 8.7 and 9.x**
+**Works with TYPO3 CMS 8.7 and 9.5**
 
 
 Processed folder
