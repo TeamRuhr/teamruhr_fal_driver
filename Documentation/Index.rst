@@ -30,7 +30,7 @@ Teamruhr: FAL driver
 			fal, driver
 
 		:Copyright:
-			2015-2018
+			2015-2019
 
 		:Author:
 			Michael Oehlhof
@@ -54,6 +54,5 @@ Teamruhr: FAL driver
 .. toctree::
 	:maxdepth: 5
 	:titlesonly:
-		:glob:
 
-		Introduction/Index
+	Introduction/Index

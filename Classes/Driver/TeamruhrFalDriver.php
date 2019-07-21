@@ -1,6 +1,6 @@
 <?php
 
-namespace Teamruhr\TeamruhrFalDriver\Driver;
+namespace TeamRuhr\TeamruhrFalDriver\Driver;
 
 /*
  * This file is part of the TYPO3 CMS project.
