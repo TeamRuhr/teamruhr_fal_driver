@@ -14,7 +14,7 @@
     "issues": "https://github.com/TeamRuhr/teamruhr_fal_driver/issues"
   },
   "require": {
-    "typo3/cms-core": "^8.7 || ^9.5"
+    "typo3/cms-core": "^8.7 || ^9.5.17"
   },
   "replace": {
     "teamruhr/teamruhr_fal_driver": "self.version",
